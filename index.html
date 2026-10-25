@@ -5,66 +5,168 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>KasKita V2 - Aplikasi Kasir Pintar</title>
     
-    <!-- Pengaturan PWA (Warna Tema & File Manifest) -->
+    <!-- Pengaturan PWA -->
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#2563eb">
     
-    <!-- Script Tailwind CSS untuk tampilan cantik dan responsif otomatis -->
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="bg-slate-50 min-h-screen flex items-center justify-center p-4 font-sans">
+<body class="bg-slate-50 font-sans text-slate-800">
 
-    <!-- Kotak Putih Utama -->
-    <div class="bg-white p-8 rounded-2xl shadow-xl w-full max-w-md text-center">
-        <!-- Logo Text -->
-        <h1 class="text-4xl font-extrabold text-slate-800 mb-2 tracking-tight">
-            Kas<span class="text-blue-600">Kita</span>
-        </h1>
-        <p class="text-slate-500 mb-8">Sistem Pembukuan & Kasir Multi-Usaha</p>
+    <!-- ========================================== -->
+    <!-- HALAMAN 1: SETUP (Tampil saat belum login) -->
+    <!-- ========================================== -->
+    <div id="setup-section" class="min-h-screen flex items-center justify-center p-4">
+        <div class="bg-white p-8 rounded-2xl shadow-xl w-full max-w-md text-center">
+            <h1 class="text-4xl font-extrabold text-slate-800 mb-2 tracking-tight">
+                Kas<span class="text-blue-600">Kita</span>
+            </h1>
+            <p class="text-slate-500 mb-8">Sistem Pembukuan & Kasir Multi-Usaha</p>
 
-        <!-- Form Input URL Database -->
-        <div id="setup-section" class="text-left space-y-5">
-            <div>
-                <label class="block text-sm font-semibold text-slate-700 mb-2">URL Database Toko (Apps Script)</label>
-                <input type="url" id="db-url" placeholder="https://script.google.com/.../exec"
-                    class="w-full px-4 py-3 border border-slate-300 rounded-xl focus:ring-4 focus:ring-blue-100 focus:border-blue-500 outline-none transition-all text-sm">
+            <div class="text-left space-y-5">
+                <div>
+                    <label class="block text-sm font-semibold text-slate-700 mb-2">URL Database Toko (Apps Script)</label>
+                    <input type="url" id="db-url" placeholder="https://script.google.com/.../exec"
+                        class="w-full px-4 py-3 border border-slate-300 rounded-xl focus:ring-4 focus:ring-blue-100 focus:border-blue-500 outline-none transition-all text-sm">
+                </div>
+                <button onclick="simpanURL()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3.5 rounded-xl transition-colors shadow-lg shadow-blue-200">
+                    Sambungkan & Buka Toko
+                </button>
+                <p class="text-xs text-slate-400 mt-4 text-center leading-relaxed">
+                    Aplikasi ini menggunakan sistem <b>Bring Your Own Database</b>.<br>Seluruh data tersimpan aman di Google Drive Anda.
+                </p>
             </div>
-            
-            <button onclick="simpanURL()" class="w-full bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white font-bold py-3.5 rounded-xl transition-colors shadow-lg shadow-blue-200">
-                Sambungkan & Buka Toko
-            </button>
-            
-            <p class="text-xs text-slate-400 mt-4 text-center leading-relaxed">
-                Aplikasi ini menggunakan sistem <b>Bring Your Own Database</b>.<br>Seluruh data penjualan tersimpan aman 100% di Google Drive milik Anda sendiri.
-            </p>
         </div>
     </div>
 
-    <!-- Logika Javascript Sederhana -->
+    <!-- ========================================== -->
+    <!-- HALAMAN 2: DASHBOARD KASIR                 -->
+    <!-- ========================================== -->
+    <div id="pos-section" class="hidden h-screen flex flex-col">
+        
+        <!-- Header / Navbar -->
+        <header class="bg-blue-600 text-white p-4 shadow-md flex justify-between items-center z-10">
+            <div class="flex items-center gap-3">
+                <h1 class="text-xl font-bold tracking-tight">Kas<span class="text-blue-200">Kita</span></h1>
+                <span class="bg-blue-800 text-xs px-2 py-1 rounded-full">Toko Saya</span>
+            </div>
+            <button onclick="keluarToko()" class="text-sm bg-blue-700 hover:bg-blue-800 px-4 py-2 rounded-lg font-semibold transition">
+                Ganti Toko
+            </button>
+        </header>
+
+        <!-- Area Utama: Produk & Keranjang -->
+        <div class="flex-1 flex flex-col md:flex-row overflow-hidden">
+            
+            <!-- Kiri: Daftar Produk -->
+            <main class="flex-1 bg-slate-100 p-4 overflow-y-auto">
+                <h2 class="font-bold text-slate-600 mb-4">Pilih Produk</h2>
+                
+                <!-- Grid Produk (Contoh Sementara) -->
+                <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
+                    
+                    <!-- Kartu Produk 1 -->
+                    <div class="bg-white p-3 rounded-xl shadow-sm border border-slate-200 hover:shadow-md cursor-pointer transition active:scale-95">
+                        <div class="h-24 bg-slate-100 rounded-lg mb-3 flex items-center justify-center text-4xl">✏️</div>
+                        <h3 class="font-semibold text-sm leading-tight mb-1">Pensil 2B Faber Castell</h3>
+                        <p class="text-blue-600 font-bold text-sm">Rp 4.000</p>
+                    </div>
+
+                    <!-- Kartu Produk 2 -->
+                    <div class="bg-white p-3 rounded-xl shadow-sm border border-slate-200 hover:shadow-md cursor-pointer transition active:scale-95">
+                        <div class="h-24 bg-slate-100 rounded-lg mb-3 flex items-center justify-center text-4xl">📄</div>
+                        <h3 class="font-semibold text-sm leading-tight mb-1">Kertas HVS A4 70gsm</h3>
+                        <p class="text-blue-600 font-bold text-sm">Rp 55.000</p>
+                    </div>
+
+                    <!-- Kartu Produk 3 -->
+                    <div class="bg-white p-3 rounded-xl shadow-sm border border-slate-200 hover:shadow-md cursor-pointer transition active:scale-95">
+                        <div class="h-24 bg-slate-100 rounded-lg mb-3 flex items-center justify-center text-4xl">✂️</div>
+                        <h3 class="font-semibold text-sm leading-tight mb-1">Gunting Joyko Besar</h3>
+                        <p class="text-blue-600 font-bold text-sm">Rp 12.000</p>
+                    </div>
+
+                </div>
+            </main>
+
+            <!-- Kanan: Keranjang Pesanan -->
+            <aside class="w-full md:w-96 bg-white border-t md:border-t-0 md:border-l border-slate-200 flex flex-col shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.1)] md:shadow-none z-20">
+                <div class="p-4 border-b border-slate-100 bg-white">
+                    <h2 class="font-bold text-lg text-slate-800">Keranjang (0)</h2>
+                </div>
+                
+                <!-- Daftar Item di Keranjang -->
+                <div class="flex-1 p-4 overflow-y-auto bg-slate-50 flex items-center justify-center text-slate-400 text-sm">
+                    <p>Belum ada produk yang dipilih</p>
+                </div>
+
+                <!-- Total & Tombol Bayar -->
+                <div class="p-4 bg-white border-t border-slate-200">
+                    <div class="flex justify-between items-center mb-4">
+                        <span class="font-bold text-slate-600">Total Tagihan</span>
+                        <span class="text-2xl font-black text-blue-600">Rp 0</span>
+                    </div>
+                    <button class="w-full bg-green-500 hover:bg-green-600 active:bg-green-700 text-white font-bold py-4 rounded-xl text-lg transition-colors shadow-lg shadow-green-200">
+                        Bayar Sekarang
+                    </button>
+                </div>
+            </aside>
+
+        </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- LOGIKA JAVASCRIPT KONTROL HALAMAN          -->
+    <!-- ========================================== -->
     <script>
-        // Mengecek apakah sebelumnya sudah pernah login
+        const setupSection = document.getElementById('setup-section');
+        const posSection = document.getElementById('pos-section');
+        const dbUrlInput = document.getElementById('db-url');
+
+        // 1. Cek status saat aplikasi pertama dibuka
         window.onload = function() {
             const savedUrl = localStorage.getItem("kaskita_db_url");
             if(savedUrl) {
-                document.getElementById('db-url').value = savedUrl;
+                // Jika sudah ada URL, langsung buka mesin kasir
+                bukaMesinKasir();
             }
         }
 
-        // Fungsi menyimpan URL ke HP pengguna
+        // 2. Fungsi Tombol "Sambungkan & Buka Toko"
         function simpanURL() {
-            const url = document.getElementById('db-url').value;
+            const url = dbUrlInput.value;
             if(url.includes("script.google.com") && url.endsWith("/exec")) {
                 localStorage.setItem("kaskita_db_url", url);
-                alert("✅ Database Toko Berhasil Disambungkan!\n\n(Halaman menu kasir akan kita bangun di tahap selanjutnya).");
+                bukaMesinKasir();
             } else {
                 alert("❌ URL tidak valid. Pastikan itu adalah link /exec dari Google Apps Script.");
             }
         }
 
+        // 3. Fungsi pindah tampilan ke halaman Kasir
+        function bukaMesinKasir() {
+            setupSection.classList.add('hidden');
+            setupSection.classList.remove('flex');
+            posSection.classList.remove('hidden');
+        }
+
+        // 4. Fungsi Tombol "Ganti Toko" (Logout)
+        function keluarToko() {
+            if(confirm("Anda yakin ingin keluar dari toko ini?")) {
+                localStorage.removeItem("kaskita_db_url");
+                dbUrlInput.value = "";
+                
+                // Kembali ke halaman setup
+                posSection.classList.add('hidden');
+                setupSection.classList.remove('hidden');
+                setupSection.classList.add('flex');
+            }
+        }
+
         // Mendaftarkan Service Worker untuk PWA
         if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('sw.js')
-            .then(() => console.log('Service Worker Terdaftar'));
+            navigator.serviceWorker.register('sw.js').catch(err => console.log(err));
         }
     </script>
 </body>
