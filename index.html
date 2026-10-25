@@ -4,6 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>KasKita V2 - Aplikasi Kasir Pintar</title>
+    
+    <!-- Pengaturan PWA (Warna Tema & File Manifest) -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#2563eb">
+    
     <!-- Script Tailwind CSS untuk tampilan cantik dan responsif otomatis -->
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
@@ -54,6 +59,12 @@
             } else {
                 alert("❌ URL tidak valid. Pastikan itu adalah link /exec dari Google Apps Script.");
             }
+        }
+
+        // Mendaftarkan Service Worker untuk PWA
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('sw.js')
+            .then(() => console.log('Service Worker Terdaftar'));
         }
     </script>
 </body>
