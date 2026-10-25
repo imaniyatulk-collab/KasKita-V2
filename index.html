@@ -33,9 +33,6 @@
                 <button onclick="simpanURL()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3.5 rounded-xl transition-colors shadow-lg shadow-blue-200">
                     Sambungkan & Buka Toko
                 </button>
-                <p class="text-xs text-slate-400 mt-4 text-center leading-relaxed">
-                    Aplikasi ini menggunakan sistem <b>Bring Your Own Database</b>.<br>Seluruh data tersimpan aman di Google Drive Anda.
-                </p>
             </div>
         </div>
     </div>
@@ -63,51 +60,32 @@
             <main class="flex-1 bg-slate-100 p-4 overflow-y-auto">
                 <h2 class="font-bold text-slate-600 mb-4">Pilih Produk</h2>
                 
-                <!-- Grid Produk (Contoh Sementara) -->
-                <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
-                    
-                    <!-- Kartu Produk 1 -->
-                    <div class="bg-white p-3 rounded-xl shadow-sm border border-slate-200 hover:shadow-md cursor-pointer transition active:scale-95">
-                        <div class="h-24 bg-slate-100 rounded-lg mb-3 flex items-center justify-center text-4xl">✏️</div>
-                        <h3 class="font-semibold text-sm leading-tight mb-1">Pensil 2B Faber Castell</h3>
-                        <p class="text-blue-600 font-bold text-sm">Rp 4.000</p>
-                    </div>
-
-                    <!-- Kartu Produk 2 -->
-                    <div class="bg-white p-3 rounded-xl shadow-sm border border-slate-200 hover:shadow-md cursor-pointer transition active:scale-95">
-                        <div class="h-24 bg-slate-100 rounded-lg mb-3 flex items-center justify-center text-4xl">📄</div>
-                        <h3 class="font-semibold text-sm leading-tight mb-1">Kertas HVS A4 70gsm</h3>
-                        <p class="text-blue-600 font-bold text-sm">Rp 55.000</p>
-                    </div>
-
-                    <!-- Kartu Produk 3 -->
-                    <div class="bg-white p-3 rounded-xl shadow-sm border border-slate-200 hover:shadow-md cursor-pointer transition active:scale-95">
-                        <div class="h-24 bg-slate-100 rounded-lg mb-3 flex items-center justify-center text-4xl">✂️</div>
-                        <h3 class="font-semibold text-sm leading-tight mb-1">Gunting Joyko Besar</h3>
-                        <p class="text-blue-600 font-bold text-sm">Rp 12.000</p>
-                    </div>
-
+                <!-- Grid Produk (Diisi oleh JavaScript) -->
+                <div id="grid-produk" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
+                    <!-- Produk akan muncul di sini -->
                 </div>
             </main>
 
             <!-- Kanan: Keranjang Pesanan -->
             <aside class="w-full md:w-96 bg-white border-t md:border-t-0 md:border-l border-slate-200 flex flex-col shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.1)] md:shadow-none z-20">
                 <div class="p-4 border-b border-slate-100 bg-white">
-                    <h2 class="font-bold text-lg text-slate-800">Keranjang (0)</h2>
+                    <h2 id="judul-keranjang" class="font-bold text-lg text-slate-800">Keranjang (0)</h2>
                 </div>
                 
-                <!-- Daftar Item di Keranjang -->
-                <div class="flex-1 p-4 overflow-y-auto bg-slate-50 flex items-center justify-center text-slate-400 text-sm">
-                    <p>Belum ada produk yang dipilih</p>
+                <!-- Daftar Item di Keranjang (Diisi oleh JavaScript) -->
+                <div id="daftar-keranjang" class="flex-1 p-4 overflow-y-auto bg-slate-50 flex flex-col gap-3">
+                    <div class="h-full flex items-center justify-center text-slate-400 text-sm">
+                        <p>Belum ada produk yang dipilih</p>
+                    </div>
                 </div>
 
                 <!-- Total & Tombol Bayar -->
                 <div class="p-4 bg-white border-t border-slate-200">
                     <div class="flex justify-between items-center mb-4">
                         <span class="font-bold text-slate-600">Total Tagihan</span>
-                        <span class="text-2xl font-black text-blue-600">Rp 0</span>
+                        <span id="total-harga" class="text-2xl font-black text-blue-600">Rp 0</span>
                     </div>
-                    <button class="w-full bg-green-500 hover:bg-green-600 active:bg-green-700 text-white font-bold py-4 rounded-xl text-lg transition-colors shadow-lg shadow-green-200">
+                    <button onclick="prosesBayar()" class="w-full bg-green-500 hover:bg-green-600 active:bg-green-700 text-white font-bold py-4 rounded-xl text-lg transition-colors shadow-lg shadow-green-200">
                         Bayar Sekarang
                     </button>
                 </div>
@@ -117,54 +95,165 @@
     </div>
 
     <!-- ========================================== -->
-    <!-- LOGIKA JAVASCRIPT KONTROL HALAMAN          -->
+    <!-- LOGIKA JAVASCRIPT APLIKASI                 -->
     <!-- ========================================== -->
     <script>
+        // --- DATA SEMENTARA (Nanti akan diambil dari Google Sheets) ---
+        const produkData = [
+            { id: 1, nama: 'Pensil 2B Faber Castell', harga: 4000, icon: '✏️' },
+            { id: 2, nama: 'Kertas HVS A4 70gsm', harga: 55000, icon: '📄' },
+            { id: 3, nama: 'Gunting Joyko Besar', harga: 12000, icon: '✂️' },
+            { id: 4, nama: 'Spidol Hitam Snowman', harga: 8500, icon: '🖊️' },
+            { id: 5, nama: 'Buku Tulis Sinar Dunia', harga: 4500, icon: '📓' },
+            { id: 6, nama: 'Penghapus Joyko', harga: 2000, icon: '🧽' }
+        ];
+
+        let keranjang = []; // Menyimpan daftar pesanan
+
+        // --- FUNGSI KONTROL HALAMAN ---
         const setupSection = document.getElementById('setup-section');
         const posSection = document.getElementById('pos-section');
         const dbUrlInput = document.getElementById('db-url');
 
-        // 1. Cek status saat aplikasi pertama dibuka
         window.onload = function() {
             const savedUrl = localStorage.getItem("kaskita_db_url");
-            if(savedUrl) {
-                // Jika sudah ada URL, langsung buka mesin kasir
-                bukaMesinKasir();
-            }
+            if(savedUrl) { bukaMesinKasir(); }
+            renderProduk(); // Tampilkan produk saat aplikasi dimuat
         }
 
-        // 2. Fungsi Tombol "Sambungkan & Buka Toko"
         function simpanURL() {
             const url = dbUrlInput.value;
             if(url.includes("script.google.com") && url.endsWith("/exec")) {
                 localStorage.setItem("kaskita_db_url", url);
                 bukaMesinKasir();
             } else {
-                alert("❌ URL tidak valid. Pastikan itu adalah link /exec dari Google Apps Script.");
+                alert("❌ URL tidak valid.");
             }
         }
 
-        // 3. Fungsi pindah tampilan ke halaman Kasir
         function bukaMesinKasir() {
             setupSection.classList.add('hidden');
             setupSection.classList.remove('flex');
             posSection.classList.remove('hidden');
         }
 
-        // 4. Fungsi Tombol "Ganti Toko" (Logout)
         function keluarToko() {
-            if(confirm("Anda yakin ingin keluar dari toko ini?")) {
+            if(confirm("Anda yakin ingin keluar?")) {
                 localStorage.removeItem("kaskita_db_url");
                 dbUrlInput.value = "";
-                
-                // Kembali ke halaman setup
                 posSection.classList.add('hidden');
                 setupSection.classList.remove('hidden');
                 setupSection.classList.add('flex');
             }
         }
 
-        // Mendaftarkan Service Worker untuk PWA
+        // --- FUNGSI MESIN KASIR ---
+        
+        // Mengubah angka menjadi format Rupiah (Rp 10.000)
+        function formatRupiah(angka) {
+            return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(angka);
+        }
+
+        // Menampilkan daftar produk ke layar
+        function renderProduk() {
+            const grid = document.getElementById('grid-produk');
+            grid.innerHTML = '';
+            
+            produkData.forEach(p => {
+                grid.innerHTML += `
+                <div onclick="tambahKeKeranjang(${p.id})" class="bg-white p-3 rounded-xl shadow-sm border border-slate-200 hover:shadow-md hover:border-blue-300 cursor-pointer transition active:scale-95 flex flex-col justify-between">
+                    <div class="h-20 bg-slate-50 rounded-lg mb-2 flex items-center justify-center text-4xl">${p.icon}</div>
+                    <div>
+                        <h3 class="font-semibold text-sm leading-tight mb-1 text-slate-700">${p.nama}</h3>
+                        <p class="text-blue-600 font-bold text-sm">${formatRupiah(p.harga)}</p>
+                    </div>
+                </div>
+                `;
+            });
+        }
+
+        // Menambahkan barang ke keranjang
+        function tambahKeKeranjang(idProduk) {
+            const produk = produkData.find(p => p.id === idProduk);
+            const itemDiKeranjang = keranjang.find(item => item.id === idProduk);
+
+            if(itemDiKeranjang) {
+                itemDiKeranjang.qty += 1; // Jika sudah ada, tambah jumlahnya
+            } else {
+                keranjang.push({ ...produk, qty: 1 }); // Jika belum, masukkan ke keranjang
+            }
+            
+            renderKeranjang();
+        }
+
+        // Mengurangi jumlah barang di keranjang
+        function kurangiDariKeranjang(idProduk) {
+            const index = keranjang.findIndex(item => item.id === idProduk);
+            if (index !== -1) {
+                if (keranjang[index].qty > 1) {
+                    keranjang[index].qty -= 1;
+                } else {
+                    keranjang.splice(index, 1); // Hapus jika qty = 0
+                }
+            }
+            renderKeranjang();
+        }
+
+        // Memperbarui tampilan keranjang dan total harga
+        function renderKeranjang() {
+            const daftar = document.getElementById('daftar-keranjang');
+            const judul = document.getElementById('judul-keranjang');
+            const totalTeks = document.getElementById('total-harga');
+            
+            if(keranjang.length === 0) {
+                judul.innerText = `Keranjang (0)`;
+                daftar.innerHTML = `<div class="h-full flex items-center justify-center text-slate-400 text-sm"><p>Belum ada produk yang dipilih</p></div>`;
+                totalTeks.innerText = formatRupiah(0);
+                return;
+            }
+
+            daftar.innerHTML = '';
+            let total = 0;
+            let totalItem = 0;
+
+            keranjang.forEach(item => {
+                const subtotal = item.harga * item.qty;
+                total += subtotal;
+                totalItem += item.qty;
+
+                daftar.innerHTML += `
+                <div class="bg-white p-3 rounded-lg border border-slate-200 flex justify-between items-center shadow-sm">
+                    <div class="flex-1 pr-2">
+                        <h4 class="font-semibold text-sm text-slate-800 line-clamp-1">${item.nama}</h4>
+                        <p class="text-xs text-slate-500">${formatRupiah(item.harga)}</p>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <div class="flex items-center bg-slate-100 rounded-lg">
+                            <button onclick="kurangiDariKeranjang(${item.id})" class="w-8 h-8 flex items-center justify-center font-bold text-slate-600 hover:bg-slate-200 rounded-l-lg">-</button>
+                            <span class="w-6 text-center font-bold text-sm">${item.qty}</span>
+                            <button onclick="tambahKeKeranjang(${item.id})" class="w-8 h-8 flex items-center justify-center font-bold text-slate-600 hover:bg-slate-200 rounded-r-lg">+</button>
+                        </div>
+                        <span class="font-bold text-sm text-blue-600 w-20 text-right">${formatRupiah(subtotal)}</span>
+                    </div>
+                </div>
+                `;
+            });
+
+            judul.innerText = `Keranjang (${totalItem})`;
+            totalTeks.innerText = formatRupiah(total);
+        }
+
+        // Simulasi Tombol Bayar
+        function prosesBayar() {
+            if(keranjang.length === 0) {
+                alert("Keranjang masih kosong!");
+                return;
+            }
+            alert("✅ Pembayaran Berhasil!\n\n(Nantinya data ini akan dikirim otomatis ke Google Sheets)");
+            keranjang = []; // Kosongkan keranjang setelah bayar
+            renderKeranjang();
+        }
+
         if ('serviceWorker' in navigator) {
             navigator.serviceWorker.register('sw.js').catch(err => console.log(err));
         }
